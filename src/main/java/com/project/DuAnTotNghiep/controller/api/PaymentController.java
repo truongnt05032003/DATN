@@ -20,13 +20,13 @@ import java.util.Map;
 @Controller
 public class PaymentController {
 
-    private final PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;  // (Service) giao tiếp với csdl để quản lý các bản ghi thanh toán
 
     public PaymentController(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
 
-    @GetMapping("/payment-result")
+    @GetMapping("/payment-result")  // Hiển thị kết quả thanh toán
     public String viewPaymentResult(HttpServletRequest request, Model model) throws UnsupportedEncodingException {
         Map fields = new HashMap();
         for (Enumeration params = request.getParameterNames(); params.hasMoreElements(); ) {
@@ -44,7 +44,7 @@ public class PaymentController {
         if (fields.containsKey("vnp_SecureHash")) {
             fields.remove("vnp_SecureHash");
         }
-        String signValue = ConfigVNPay.hashAllFields(fields);
+        String signValue = ConfigVNPay.hashAllFields(fields);  // Cấu hình liên quan đến cổng thanh toán VNPay
         PaymentResultDto paymentResultDto = new PaymentResultDto();
         paymentResultDto.setTxnRef(fields.get("vnp_TxnRef").toString());
         paymentResultDto.setAmount(String.valueOf(Double.parseDouble(fields.get("vnp_Amount").toString()) / 100));
@@ -94,7 +94,7 @@ public class PaymentController {
             model.addAttribute("paymentSuccess", false);
 
         }
-        return "user/payment-result";
+        return "user/payment-result";  // Sau khi giao dịch được thực hiện, cổng VNPay sẽ gọi lại URL /payment-result của hệ thống để truyền thông tin về kết quả thanh toán
     }
 
     private void updatePaymentStatus(Payment payment) {
